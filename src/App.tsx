@@ -17,7 +17,7 @@ import AboutPage from "./features/about/AboutPage.tsx";
 import AdminHomeImagesPage from "./features/admin/home/AdminHomeImagesPage.tsx";
 import AdminRoute from "./routes/AdminRoute.tsx";
 import {useEffect} from "react";
-import {getMe, getToken, logout} from "./api/auth.api.ts";
+import {getUserFromToken} from "./api/auth.api.ts";
 import AdminFurnitureListPage from "./features/admin/furniture/AdminFurnitureListPage.tsx";
 import FurnitureDetailPage from "./features/furniture/FurnitureDetailPage.tsx";
 import AdminFurnitureDetailPage from "./features/admin/furniture/AdminFurnitureDetailPage.tsx";
@@ -31,19 +31,11 @@ function App() {
     const setUser = useSetAtom(userAtom);
 
     useEffect(() => {
-        const token = getToken();
-
-        if (!token) return;
-
-        getMe()
-            .then((me) => {
-                setUser({ role: me.role });
-            })
-            .catch(() => {
-                logout();
-                setUser({ role: null });
-            });
+        const user = getUserFromToken();
+        setUser(user);
     }, [setUser]);
+
+
 
     return (
         <>

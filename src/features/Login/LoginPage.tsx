@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {login} from "../../api/auth.api.ts";
+import { getUserFromToken, login, STORAGE_KEY} from "../../api/auth.api.ts";
 import {userAtom} from "../../store/auth.ts";
 import {useSetAtom} from "jotai";
 
@@ -26,9 +26,10 @@ export default function LoginPage() {
             setLoading(true);
             setError(null);
 
-            const { user } = await login(username, password);
+            const { token } = await login(username, password);
+            localStorage.setItem(STORAGE_KEY, token);
 
-            //로그인 성공
+            const user = getUserFromToken();
             setUser(user);
 
             navigate("/", { replace: true });

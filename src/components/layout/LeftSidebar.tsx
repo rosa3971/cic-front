@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { logout} from "../../api/auth.api.ts";
 import {userAtom} from "../../store/auth.ts";
-import {useAtomValue} from "jotai";
+import {useAtomValue, useSetAtom} from "jotai";
 
 
 type LeftSidebarProps = {
@@ -66,6 +66,7 @@ function buildMenus(auth: AuthState | null): Menu[] {
 
     export default function LeftSidebar({ isHome, onClose }: LeftSidebarProps) {
         const auth = useAtomValue(userAtom);
+        const setUser = useSetAtom(userAtom);
         const menus = useMemo(() => buildMenus(auth), [auth]);
         const [hovered, setHovered] = useState<string | null>(null);
 
@@ -125,6 +126,7 @@ function buildMenus(auth: AuthState | null): Menu[] {
                                         onClick={async () => {
                                             if (menu.key === "Logout") {
                                                 await logout();
+                                                setUser({ role: null });
                                                 handleNavigate("/");
                                                 return;
                                             }

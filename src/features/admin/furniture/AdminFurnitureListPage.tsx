@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {deleteAdminFurniture, getAdminFurnitureList, togglePublic, updateFurnitureOrder} from "../../../api/furniture.api.ts";
-import {getThumbnail} from "../../../utils/imageUtils.ts";
 import SortableList from "../../../components/common/displayOrder/SortableList.tsx";
 import AlertModal from "../../../components/common/modal/AlertModal.tsx";
 import ConfirmModal from "../../../components/common/modal/ConfirmModal.tsx";
+import { isVideoUrl } from "../../../utils/imageUtils.ts";
 
 
 export default function AdminFurnitureListPage() {
@@ -121,10 +121,21 @@ export default function AdminFurnitureListPage() {
                             onChangeOrder={(newList) => setTempList(newList)}
                             renderItem={(p) => (
                                 <section className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 bg-white cursor-grab border rounded">
-                                    <img
-                                        src={p.thumbnailUrl}
-                                        className="w-full h-[200px] object-cover rounded"
-                                    />
+                                    {isVideoUrl(p.thumbnailUrl) ? (
+                                        <video
+                                            src={p.thumbnailUrl}
+                                            className="w-full h-[200px] object-cover rounded"
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                        />
+                                    ) : (
+                                        <img
+                                            src={p.thumbnailUrl}
+                                            className="w-full h-[200px] object-cover rounded"
+                                        />
+                                    )}
                                     <div>
                                         <p>{p.furnitureCode}</p>
                                         <p>{p.title}</p>
@@ -144,12 +155,23 @@ export default function AdminFurnitureListPage() {
                             <div className="hidden md:block"></div>
                             {/* 중앙 이미지 */}
                             <div className="w-full aspect-square overflow-hidden bg-zinc-50">
-                                <img
-                                    src={getThumbnail(f.thumbnailUrl)}
-                                    loading="lazy"
-                                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                    alt={f.furnitureCode}
-                                />
+
+                                {isVideoUrl(f.thumbnailUrl) ? (
+                                    <video
+                                        src={f.thumbnailUrl}
+                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                        autoPlay
+                                        muted
+                                        loop
+                                        playsInline
+                                    />
+                                ) : (
+                                    <img
+                                        src={f.thumbnailUrl}
+                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                        alt={f.furnitureCode}
+                                    />
+                                )}
                             </div>
 
                             {/* 텍스트 */}

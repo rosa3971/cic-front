@@ -1,47 +1,27 @@
-import {supabase} from "../utils/supabase.ts";
 import api from "./axiosInstance.ts";
-import type {IUser} from "../types/auth.ts";
-
-interface LoginResponse {
-    token: string;
-    user: IUser;
-}
+import {jwtDecode} from "jwt-decode";
 
 /**
  * 로컬스토리지 키
  */
-const STORAGE_KEY = "cic.auth";
+export const STORAGE_KEY = "cic.auth";
+
+
+interface DecodedToken {
+    id: number;
+    email: string;
+    role: string;
+    exp: number; // 만료 시각 (초 단위 UNIX timestamp)
+}
+
 
 /**
  * 로그인 요청 (DB 기반)
  */
-export async function login(username: string, password: string): Promise<LoginResponse> {
-
-
-    const email = `${username}@cicstudio.com`;
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-    });
-
-    if (error) throw error;
-
-    const token = data.session?.access_token;
-    if (!token) {throw new Error("토큰 없음");}
-
-    localStorage.setItem(STORAGE_KEY, token);
-    //권한은 백엔드에서 가져오기
-    const me = await getMe();
-
-    return {
-        token,
-        user: {
-            role: me.role, // ROLE_ADMIN
-        },
-    };
-}
-
+export const login = async (email: string, password: string) => {
+    const res = await api.post("/auth/login", { email, password });
+    return res.data;
+};
 /**
  * 토큰 가져오기
  */
@@ -49,16 +29,31 @@ export function getToken(): string | null {
     return localStorage.getItem(STORAGE_KEY);
 }
 
-export async function getMe() {
-    const res = await api.get("/auth/me");
-    return res.data;
+/**
+ * 토큰을 디코딩해서 유저 정보 반환.
+ * 토큰이 없거나, 형식이 깨졌거나, 만료됐으면 null role 반환.
+ */
+export function getUserFromToken(): { role: string | null } {
+    const token = getToken();
+    if (!token) return { role: null };
+
+    try {
+        const decoded = jwtDecode<DecodedToken>(token);
+
+        // 만료 체크
+        const now = Date.now() / 1000;
+        if (decoded.exp < now) {
+            localStorage.removeItem(STORAGE_KEY);
+            return { role: null };
+        }
+
+        return { role: decoded.role };
+    } catch {
+        localStorage.removeItem(STORAGE_KEY);
+        return { role: null };
+    }
 }
 
-/**
- * 로그아웃
- */
-export async function logout() {
-    await supabase.auth.signOut();
+export function logout() {
     localStorage.removeItem(STORAGE_KEY);
-
 }
