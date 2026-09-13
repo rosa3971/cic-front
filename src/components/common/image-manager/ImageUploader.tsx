@@ -3,15 +3,15 @@ import ImageGallerySlider from "./ImageGallerySlider.tsx";
 import SortableImageList from "./SortableImageList.tsx";
 import { useState } from "react";
 import ImageGalleryVertical from "./ImageGalleryVertical.tsx";
-import type {IImageItem} from "../../../types/image/Image.type.ts";
+import type {IImageItem, ThumbnailItem} from "../../../types/image/Image.type.ts";
 
 interface Props {
     images: IImageItem[];
     setImages: React.Dispatch<React.SetStateAction<IImageItem[]>>;
-    thumbnail: any;
-    setThumbnail: (thumb: any) => void;
+    thumbnails: ThumbnailItem[];          // thumbnail → thumbnails
+    setThumbnails: React.Dispatch<React.SetStateAction<ThumbnailItem[]>>; // 변경
     isEdit?: boolean;
-    viewType?: "slider" | "vertical"; //좌우 슬라이드(인테리어), 세로 나열(가구)
+    viewType?: "slider" | "vertical";
     uploadFn: (file: File) => Promise<string>;
     setDeletedImages: React.Dispatch<React.SetStateAction<string[]>>;
 }
@@ -19,8 +19,8 @@ interface Props {
 export default function ImageUploader({
                                           images,
                                           setImages,
-                                          thumbnail,
-                                          setThumbnail,
+                                          thumbnails,
+                                          setThumbnails,
                                           isEdit = true,
                                           viewType,
                                           uploadFn,
@@ -93,8 +93,8 @@ export default function ImageUploader({
 
             {/* 썸네일 */}
             <ThumbnailUploader
-                thumbnail={thumbnail}
-                setThumbnail={setThumbnail}
+                thumbnails={thumbnails}
+                setThumbnails={setThumbnails}
                 isEdit={isEdit}
             />
 

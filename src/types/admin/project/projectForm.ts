@@ -1,13 +1,9 @@
 
 import type { IProject } from "./IProject";
+import type {ThumbnailItem} from "../../image/Image.type.ts";
 
-export interface IThumbnail {
-    file?: File;
-    preview?: string;
-    imageUrl?: string;
-}
 
 export interface IProjectFormState {
     project: IProject;
-    thumbnail: IThumbnail | null;
+    thumbnails: ThumbnailItem[];
 }

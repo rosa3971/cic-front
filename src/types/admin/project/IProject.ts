@@ -12,7 +12,7 @@ export interface IProject {
     photography: string;
     description: string;
 
-    thumbnailUrl?: string;
+    thumbnailUrls?: string[];
     status:string;
     isPublic:boolean;
     images: IImageItem[];

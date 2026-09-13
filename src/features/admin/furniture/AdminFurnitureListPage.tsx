@@ -4,7 +4,7 @@ import {deleteAdminFurniture, getAdminFurnitureList, togglePublic, updateFurnitu
 import SortableList from "../../../components/common/displayOrder/SortableList.tsx";
 import AlertModal from "../../../components/common/modal/AlertModal.tsx";
 import ConfirmModal from "../../../components/common/modal/ConfirmModal.tsx";
-import { isVideoUrl } from "../../../utils/imageUtils.ts";
+import ThumbnailSlide from "../../../components/common/image-manager/ThumbnailSlide.tsx";
 
 
 export default function AdminFurnitureListPage() {
@@ -65,7 +65,7 @@ export default function AdminFurnitureListPage() {
         <div className="h-full min-h-screen px-16">
             <div className="flex items-start justify-between gap-6 mb-6">
                 <h1 className="text-md md:text-3xl font-cic font-light uppercase">
-                    가구 리스트
+                    Furniture List
                 </h1>
 
                 <div className="flex gap-2">
@@ -121,21 +121,9 @@ export default function AdminFurnitureListPage() {
                             onChangeOrder={(newList) => setTempList(newList)}
                             renderItem={(p) => (
                                 <section className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 bg-white cursor-grab border rounded">
-                                    {isVideoUrl(p.thumbnailUrl) ? (
-                                        <video
-                                            src={p.thumbnailUrl}
-                                            className="w-full h-[200px] object-cover rounded"
-                                            autoPlay
-                                            muted
-                                            loop
-                                            playsInline
-                                        />
-                                    ) : (
-                                        <img
-                                            src={p.thumbnailUrl}
-                                            className="w-full h-[200px] object-cover rounded"
-                                        />
-                                    )}
+                                    <ThumbnailSlide
+                                        urls={p.thumbnailUrls || []}
+                                        className="w-full h-full object-cover rounded" />
                                     <div>
                                         <p>{p.furnitureCode}</p>
                                         <p>{p.title}</p>
@@ -155,23 +143,10 @@ export default function AdminFurnitureListPage() {
                             <div className="hidden md:block"></div>
                             {/* 중앙 이미지 */}
                             <div className="w-full aspect-square overflow-hidden bg-zinc-50">
-
-                                {isVideoUrl(f.thumbnailUrl) ? (
-                                    <video
-                                        src={f.thumbnailUrl}
-                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                    />
-                                ) : (
-                                    <img
-                                        src={f.thumbnailUrl}
-                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                        alt={f.furnitureCode}
-                                    />
-                                )}
+                                <ThumbnailSlide
+                                    urls={f.thumbnailUrls || []}
+                                    className="w-full h-full object-cover rounded transition-transform duration-500 hover:scale-105"
+                                />
                             </div>
 
                             {/* 텍스트 */}

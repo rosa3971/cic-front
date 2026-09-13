@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAdminProject, patchAdminProject } from "../../../api/project.api.ts";
-import {uploadImages, deleteImage} from "../../../api/cloudinary.project.api.ts";
+import { uploadImages, deleteImage } from "../../../api/cloudinary.project.api.ts";
 import ProjectForm from "./ProjectForm.tsx";
-import type {IProjectFormState} from "../../../types/admin/project/projectForm.ts";
+import type { IProjectFormState } from "../../../types/admin/project/projectForm.ts";
 import AlertModal from "../../../components/common/modal/AlertModal.tsx";
 
 export default function AdminProjectDetailPage() {
@@ -22,9 +22,9 @@ export default function AdminProjectDetailPage() {
             description: "",
             images: [],
             isPublic: true,
-            status:"COMPLETED"
+            status: "COMPLETED",
         },
-        thumbnail: null,
+        thumbnails: [],
     });
 
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
@@ -36,18 +36,17 @@ export default function AdminProjectDetailPage() {
     useEffect(() => {
         if (!projectId) return;
 
-        getAdminProject(Number(projectId)).then(res => {
+        getAdminProject(Number(projectId)).then((res) => {
             setForm({
                 project: res.data,
-                thumbnail: {
-                    imageUrl: res.data.thumbnailUrl,
-                },
+                thumbnails: (res.data.thumbnailUrls || []).map((url: string) => ({
+                    id: crypto.randomUUID(),
+                    imageUrl: url,
+                })),
             });
         });
     }, [projectId]);
 
-
-    //  로딩 방어
     useEffect(() => {
         if (!loading) {
             setStatusMessage(null);
@@ -65,50 +64,49 @@ export default function AdminProjectDetailPage() {
         );
     }
 
-    //  저장
     const handleSave = async () => {
-        const { project, thumbnail } = form;
+        const { project, thumbnails } = form;
 
         try {
             setLoading(true);
             setStatusMessage("업로드 중...");
 
-            //  새로 추가된 파일만 추출
-            let thumbnailUrl = project.thumbnailUrl;
-
-            //  Cloudinary 업로드
-            if (thumbnail?.file) {
-                thumbnailUrl = await uploadImages(thumbnail.file);
-            }
+            // 썸네일 배열 업로드 (파일이면 새로 업로드, 이미 URL이면 그대로)
+            const thumbnailUrls = await Promise.all(
+                thumbnails.map(async (thumb: any) => {
+                    if (thumb.file) {
+                        return await uploadImages(thumb.file);
+                    }
+                    return thumb.imageUrl;
+                })
+            );
 
             const imageUrls = project.images
                 .map((img: any) => img.imageUrl)
                 .filter((url) => !!url);
 
-            //  patch 요청
             await patchAdminProject(Number(project.id), {
-                projectCode:project.projectCode,
+                projectCode: project.projectCode,
                 completion: project.completion,
                 location: project.location,
                 type: project.type,
                 scope: project.scope,
                 photography: project.photography,
-                description:project.description,
+                description: project.description,
                 status: project.status,
                 isPublic: project.isPublic,
-                thumbnailUrl,
-                imageUrls
+                thumbnailUrls,
+                imageUrls,
             });
 
             await Promise.all(deletedImages.map((url) => deleteImage(url)));
 
             setIsEdit(false);
-            setDeletedImages([]); // 초기화
+            setDeletedImages([]);
             setStatusMessage("저장 완료");
-
         } catch {
             setError("수정 실패");
-        }finally {
+        } finally {
             setLoading(false);
         }
     };
@@ -116,8 +114,6 @@ export default function AdminProjectDetailPage() {
     return (
         <div className="h-full min-h-screen px-4 md:px-16 py-6 md:py-10">
             <section className="flex items-center justify-between bg-white border px-5 py-2 mb-2 shadow-sm">
-
-                {/* 좌측 */}
                 <div className="flex gap-2">
                     {!isEdit ? (
                         <>
@@ -127,7 +123,6 @@ export default function AdminProjectDetailPage() {
                             >
                                 수정
                             </button>
-
                             <button
                                 onClick={() => navigate("/admin/project/list")}
                                 className="px-3 py-1 border text-xs text-gray-600 hover:bg-gray-100"
@@ -143,14 +138,12 @@ export default function AdminProjectDetailPage() {
                             >
                                 저장
                             </button>
-
                             <button
                                 onClick={() => setIsEdit(false)}
                                 className="px-3 py-1 bg-red-500 text-white text-xs hover:bg-red-600"
                             >
                                 취소
                             </button>
-
                             <button
                                 onClick={() => navigate("/admin/project/list")}
                                 className="px-3 py-1 border text-xs text-gray-600 hover:bg-gray-100"
@@ -160,9 +153,8 @@ export default function AdminProjectDetailPage() {
                         </>
                     )}
                 </div>
-                {/* 우측 공개 상태 */}
-                <div className="flex items-center gap-3">
 
+                <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-500">공개여부</span>
 
                     {isEdit ? (
@@ -196,10 +188,9 @@ export default function AdminProjectDetailPage() {
                             {form.project.isPublic ? "공개" : "비공개"}
                         </span>
                     )}
-
                 </div>
-
             </section>
+
             <ProjectForm
                 form={form}
                 setForm={setForm}
@@ -211,11 +202,7 @@ export default function AdminProjectDetailPage() {
                 message={statusMessage || ""}
                 onClose={() => setStatusMessage(null)}
             />
-            <AlertModal
-                open={!!error}
-                message={error || ""}
-                onClose={() => setError(null)}
-            />
+            <AlertModal open={!!error} message={error || ""} onClose={() => setError(null)} />
         </div>
     );
 }

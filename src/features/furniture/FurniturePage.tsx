@@ -3,8 +3,8 @@
 import { useNavigate } from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getPublicFurnitureList} from "../../api/furniture.api.ts";
-import {getThumbnail, isVideoUrl} from "../../utils/imageUtils.ts";
 import SEO from "../../components/seo/SEO.tsx";
+import ThumbnailSlide from "../../components/common/image-manager/ThumbnailSlide.tsx";
 
 
 export default function FurniturePage() {
@@ -35,23 +35,10 @@ export default function FurniturePage() {
                             <div className="hidden md:block"></div>
                             {/* 중앙 이미지 */}
                             <div className="w-full aspect-square overflow-hidden bg-zinc-50">
-                                {isVideoUrl(f.thumbnailUrl) ? (
-                                    <video
-                                        src={f.thumbnailUrl}
-                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                    />
-                                ) : (
-                                    <img
-                                        src={getThumbnail(f.thumbnailUrl)}
-                                        loading="lazy"
-                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                        alt={f.furnitureCode}
-                                    />
-                                )}
+                                <ThumbnailSlide
+                                    urls={f.thumbnailUrls || []}
+                                    className="w-full h-full object-cover rounded transition-transform duration-500 hover:scale-105"
+                                />
                             </div>
 
                             {/* 오른쪽 텍스트 영역: 이미지 윗선과 맞춤 */}

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProjectForm from "./ProjectForm.tsx";
-import type {IProjectFormState} from "../../../types/admin/project/projectForm.ts";
-import {uploadImages} from "../../../api/cloudinary.project.api.ts";
+import type { IProjectFormState } from "../../../types/admin/project/projectForm.ts";
+import { uploadImages } from "../../../api/cloudinary.project.api.ts";
 import AlertModal from "../../../components/common/modal/AlertModal.tsx";
-import {createAdminProject} from "../../../api/project.api.ts";
+import { createAdminProject } from "../../../api/project.api.ts";
 
 export default function AdminProjectCreatePage() {
     const navigate = useNavigate();
@@ -21,9 +21,9 @@ export default function AdminProjectCreatePage() {
             description: "",
             images: [],
             isPublic: true,
-            status:"COMPLETED"
+            status: "COMPLETED",
         },
-        thumbnail: null,
+        thumbnails: [], // thumbnail: null → thumbnails: []
     });
 
     const [loading, setLoading] = useState(false);
@@ -31,23 +31,26 @@ export default function AdminProjectCreatePage() {
     const [error, setError] = useState<string | null>(null);
 
     const handleSave = async () => {
-        const { project, thumbnail } = form;
+        const { project, thumbnails } = form;
 
         try {
             setLoading(true);
             setStatusMessage("업로드 중...");
 
-            // 썸네일 업로드
-            let thumbnailUrl = null;
-            if (thumbnail?.file) {
-                thumbnailUrl = await uploadImages(thumbnail.file);
-            }
+            // 썸네일 업로드 (파일이 있는 것만 업로드, 이미 URL인 건 그대로 사용)
+            const thumbnailUrls = await Promise.all(
+                thumbnails.map(async (thumb: any) => {
+                    if (thumb.file) {
+                        return await uploadImages(thumb.file);
+                    }
+                    return thumb.imageUrl;
+                })
+            );
 
             // 이미지 업로드
             const imageUrls = project.images
                 .map((img: any) => img.imageUrl)
                 .filter((url) => !!url);
-
 
             const dto = {
                 projectCode: project.projectCode,
@@ -57,7 +60,7 @@ export default function AdminProjectCreatePage() {
                 scope: project.scope,
                 photography: project.photography,
                 description: project.description,
-                thumbnailUrl,
+                thumbnailUrls, // thumbnailUrl → thumbnailUrls (배열)
                 imageUrls,
                 isPublic: project.isPublic,
             };
@@ -65,12 +68,10 @@ export default function AdminProjectCreatePage() {
             await createAdminProject(dto);
 
             navigate("/admin/project/list", { replace: true });
-
-
         } catch (e) {
             setError("저장 중 오류 발생");
             console.error(e);
-        }finally {
+        } finally {
             setLoading(false);
         }
     };
@@ -100,11 +101,7 @@ export default function AdminProjectCreatePage() {
                 </div>
             </div>
 
-            <ProjectForm
-                form={form}
-                setForm={setForm}
-                isEdit={true}
-            />
+            <ProjectForm form={form} setForm={setForm} isEdit={true} />
             <AlertModal
                 open={!!statusMessage}
                 message={statusMessage || ""}
@@ -118,4 +115,3 @@ export default function AdminProjectCreatePage() {
         </div>
     );
 }
-

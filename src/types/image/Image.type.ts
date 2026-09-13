@@ -4,3 +4,8 @@ export interface IImageItem {
     imageUrl: string;
     publicId: string;
 }
+
+export interface ThumbnailItem extends IImageItem {
+    file?: File;
+    preview?: string;
+}

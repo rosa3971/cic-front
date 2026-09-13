@@ -11,7 +11,7 @@ export interface IFurniture {
     depth: string;
     description: string;
 
-    thumbnailUrl?: string;
+    thumbnailUrls?: string[];
     status:string;
     isPublic:boolean;
     images: IImageItem[];

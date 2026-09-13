@@ -2,8 +2,8 @@
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getPublicProjectList} from "../../../api/project.api.ts";
-import {getThumbnail, isVideoUrl} from "../../../utils/imageUtils.ts";
 import SEO from "../../../components/seo/SEO.tsx";
+import ThumbnailSlide from "../../../components/common/image-manager/ThumbnailSlide.tsx";
 
 export default function PublicProjectPage() {
     const navigate = useNavigate();
@@ -26,7 +26,6 @@ export default function PublicProjectPage() {
                     {projects.map((p) => (
                         <section
                             key={p.id}
-                            // 1. items-center 대신 items-start를 사용하여 윗부분을 맞춤
                             className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-10 items-start cursor-pointer pb-10"
                             onClick={() => navigate(`/Works/Interior/${p.projectCode}`)}
                         >
@@ -35,23 +34,10 @@ export default function PublicProjectPage() {
 
                             {/* 중앙 이미지 */}
                             <div className="w-full aspect-square overflow-hidden bg-zinc-50">
-                                {isVideoUrl(p.thumbnailUrl) ? (
-                                    <video
-                                        src={p.thumbnailUrl}
-                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                    />
-                                ) : (
-                                    <img
-                                        src={getThumbnail(p.thumbnailUrl)}
-                                        loading="lazy"
-                                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                        alt={p.projectCode}
-                                    />
-                                )}
+                                <ThumbnailSlide
+                                    urls={p.thumbnailUrls || []}
+                                    className="w-full h-full object-cover rounded transition-transform duration-500 hover:scale-105"
+                                />
                             </div>
 
                             {/* 오른쪽 텍스트 영역: 이미지 윗선과 맞춤 */}

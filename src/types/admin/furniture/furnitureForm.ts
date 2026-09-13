@@ -1,13 +1,8 @@
 import type {IFurniture} from "./IFurniture.ts";
+import type {ThumbnailItem} from "../../image/Image.type.ts";
 
-
-export interface IThumbnail {
-    file?: File;
-    preview?: string;
-    imageUrl?: string;
-}
 
 export interface IFurnitureFormState {
     furniture: IFurniture;
-    thumbnail: IThumbnail | null;
+    thumbnails: ThumbnailItem[];
 }

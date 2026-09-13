@@ -8,8 +8,8 @@ import {
 } from "../../../api/project.api.ts";
 import SortableList from "../../../components/common/displayOrder/SortableList.tsx";
 import AlertModal from "../../../components/common/modal/AlertModal.tsx";
-import { isVideoUrl } from "../../../utils/imageUtils.ts";
 import ConfirmModal from "../../../components/common/modal/ConfirmModal.tsx";
+import ThumbnailSlide from "../../../components/common/image-manager/ThumbnailSlide.tsx";
 
 export default function AdminProjectListPage() {
     const navigate = useNavigate();
@@ -69,7 +69,7 @@ export default function AdminProjectListPage() {
             {/* 상단 */}
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-md md:text-3xl font-cic font-light uppercase">
-                    프로젝트 리스트
+                    Project List
                 </h1>
 
                 <div className="flex gap-2">
@@ -124,21 +124,11 @@ export default function AdminProjectListPage() {
                         onChangeOrder={(newList) => setTempList(newList)}
                         renderItem={(p) => (
                             <section className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 bg-white cursor-grab border rounded">
-                                {isVideoUrl(p.thumbnailUrl) ? (
-                                    <video
-                                        src={p.thumbnailUrl}
-                                        className="w-full h-[200px] object-cover rounded"
-                                        autoPlay
-                                        muted
-                                        loop
-                                        playsInline
-                                    />
-                                ) : (
-                                    <img
-                                        src={p.thumbnailUrl}
-                                        className="w-full h-[200px] object-cover rounded"
-                                    />
-                                )}
+                                <div className="w-full h-[200px]">
+                                    <ThumbnailSlide
+                                        urls={p.thumbnailUrls || []}
+                                        className="w-full h-full object-cover rounded" />
+                                </div>
                                 <div>
                                     <p>{p.projectCode}</p>
                                     <p>{p.completion}</p>
@@ -151,26 +141,19 @@ export default function AdminProjectListPage() {
                     projects.map((p) => (
                         <section
                             key={p.id}
-                            className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 cursor-pointer"
+                            className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-10 items-start cursor-pointer pb-10"
                             onClick={() => navigate(`/Admin/Project/${p.id}`)}
                         >
-                            {/* 이미지 */}
-                            {isVideoUrl(p.thumbnailUrl) ? (
-                                <video
-                                    src={p.thumbnailUrl}
-                                    className="w-full h-[200px] md:h-[240px] object-cover rounded"
-                                    autoPlay
-                                    muted
-                                    loop
-                                    playsInline
+                            {/* 왼쪽 여백 */}
+                            <div className="hidden md:block"></div>
+
+                            {/* 중앙 이미지 */}
+                            <div className="w-full aspect-square overflow-hidden bg-zinc-50">
+                                <ThumbnailSlide
+                                    urls={p.thumbnailUrls || []}
+                                    className="w-full h-full object-cover rounded transition-transform duration-500 hover:scale-105"
                                 />
-                            ) : (
-                                <img
-                                    src={p.thumbnailUrl}
-                                    className="w-full h-[200px] md:h-[240px] object-cover rounded"
-                                    alt={p.projectCode}
-                                />
-                            )}
+                            </div>
 
                             {/* 텍스트 */}
                             <div className="p-2 md:p-4 flex flex-col justify-between gap-4 hover:bg-zinc-50">

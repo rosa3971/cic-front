@@ -25,7 +25,7 @@ import AdminFurnitureCreatePage from "./features/admin/furniture/AdminFurnitureC
 import ScrollToTop from "./components/layout/ScrollToTop.tsx";
 import AdminAboutPage from "./features/admin/about/AdminAboutPage.tsx";
 
-
+console.log("SUPABASE_URL:", import.meta.env.VITE_SUPABASE_URL);
 
 function App() {
     const setUser = useSetAtom(userAtom);

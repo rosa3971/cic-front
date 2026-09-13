@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function FurnitureForm({ form, setForm, isEdit, setDeletedImages }: Props) {
-    const { furniture, thumbnail } = form;
+    const { furniture, thumbnails } = form;
 
 
     return (
@@ -18,8 +18,6 @@ export default function FurnitureForm({ form, setForm, isEdit, setDeletedImages 
 
             {/* 왼쪽 - 이미지 영역 */}
             <div className="w-2/3 h-full overflow-y-auto space-y-6 pr-2 no-scrollbar">
-
-
                 {/* 이미지 리스트 */}
                 <ImageUploader
                     images={furniture.images}
@@ -35,9 +33,15 @@ export default function FurnitureForm({ form, setForm, isEdit, setDeletedImages 
                             },
                         }))
                     }
-                    thumbnail={thumbnail}
-                    setThumbnail={(thumb) =>
-                        setForm((prev) => ({ ...prev, thumbnail: thumb }))
+                    thumbnails={thumbnails}
+                    setThumbnails={(thumbs) =>
+                        setForm((prev) => ({
+                            ...prev,
+                            thumbnails:
+                                typeof thumbs === "function"
+                                    ? thumbs(prev.thumbnails)
+                                    : thumbs,
+                        }))
                     }
                     isEdit={isEdit}
                     viewType="vertical"

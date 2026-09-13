@@ -1,13 +1,15 @@
 import FurnitureForm from "./FurnitureForm.tsx";
-import {useState} from "react";
+import { useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {createAdminFurniture} from "../../../api/furniture.api.ts";
 import type {IFurnitureFormState} from "../../../types/admin/furniture/furnitureForm.ts";
 import AlertModal from "../../../components/common/modal/AlertModal.tsx";
 import {uploadImages} from "../../../api/cloudinary.furniture.api.ts";
 
+
 export default function AdminFurnitureCreatePage() {
     const navigate = useNavigate();
+
 
     const [form, setForm] = useState<IFurnitureFormState>({
         furniture: {
@@ -22,24 +24,29 @@ export default function AdminFurnitureCreatePage() {
             isPublic: true,
             status: "COMPLETED"
         },
-        thumbnail: null,
+        thumbnails: [],
     });
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
+
     const handleSave = async () => {
-        const { furniture, thumbnail } = form;
+        const { furniture, thumbnails } = form;
 
         try {
             setLoading(true);
             setStatusMessage("업로드 중...");
 
-            // 썸네일 업로드
-            let thumbnailUrl = null;
-            if (thumbnail?.file) {
-                thumbnailUrl = await uploadImages(thumbnail.file);
-            }
+            // 썸네일 배열 업로드 (파일이면 새로 업로드, 이미 URL이면 그대로)
+            const thumbnailUrls = await Promise.all(
+                thumbnails.map(async (thumb: any) => {
+                    if (thumb.file) {
+                        return await uploadImages(thumb.file);
+                    }
+                    return thumb.imageUrl;
+                })
+            );
 
             // 이미지 업로드
             const imageUrls = furniture.images
@@ -53,7 +60,7 @@ export default function AdminFurnitureCreatePage() {
                 height: furniture.height,
                 depth: furniture.depth,
                 description:furniture.description,
-                thumbnailUrl,
+                thumbnailUrls,
                 imageUrls,
                 isPublic: furniture.isPublic,
             };

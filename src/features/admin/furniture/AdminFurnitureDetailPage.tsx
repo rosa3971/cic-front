@@ -24,26 +24,25 @@ export default function AdminFurnitureDetailPage() {
             isPublic: true,
             status: "COMPLETED"
         },
-        thumbnail: null,
+        thumbnails: [],
     });
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // 데이터 가져오기
     useEffect(() => {
         if (!furnitureId) return;
 
-        getAdminFurniture(Number(furnitureId)).then(res => {
+        getAdminFurniture(Number(furnitureId)).then((res) => {
             setForm({
                 furniture: res.data,
-                thumbnail: {
-                    imageUrl: res.data.thumbnailUrl,
-                },
+                thumbnails: (res.data.thumbnailUrls || []).map((url: string) => ({
+                    id: crypto.randomUUID(),
+                    imageUrl: url,
+                })),
             });
         });
-
     }, [furnitureId]);
 
     useEffect(() => {
@@ -51,6 +50,7 @@ export default function AdminFurnitureDetailPage() {
             setStatusMessage(null);
         }
     }, [loading]);
+
 
     if (!form.furniture.id) {
         return (
@@ -64,20 +64,21 @@ export default function AdminFurnitureDetailPage() {
     }
 
   const handleSave = async () => {
-        const { furniture, thumbnail } = form;
+        const { furniture, thumbnails } = form;
 
         try {
             setLoading(true);
             setStatusMessage("업로드 중...");
 
-            //  새로 추가된 파일만 추출
-            let thumbnailUrl = furniture.thumbnailUrl;
-
-
-            //  썸네일 Cloudinary 업로드
-            if (thumbnail?.file) {
-                thumbnailUrl = await uploadImages(thumbnail.file);
-            }
+            // 썸네일 배열 업로드 (파일이면 새로 업로드, 이미 URL이면 그대로)
+            const thumbnailUrls = await Promise.all(
+                thumbnails.map(async (thumb: any) => {
+                    if (thumb.file) {
+                        return await uploadImages(thumb.file);
+                    }
+                    return thumb.imageUrl;
+                })
+            );
 
             const imageUrls = furniture.images
                 .map((img: any) => img.imageUrl)
@@ -92,7 +93,7 @@ export default function AdminFurnitureDetailPage() {
                     description:furniture.description,
                     status: furniture.status,
                     isPublic: furniture.isPublic,
-                    thumbnailUrl,
+                    thumbnailUrls,
                     imageUrls
 
             });

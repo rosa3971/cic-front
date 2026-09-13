@@ -1,6 +1,7 @@
 import ImageUploader from "../../../components/common/image-manager/ImageUploader.tsx";
-import type {IProjectFormState} from "../../../types/admin/project/projectForm.ts";
+import type { IProjectFormState } from "../../../types/admin/project/projectForm.ts";
 import { uploadImages as uploadProject } from "../../../api/cloudinary.project.api.ts";
+
 interface Props {
     form: IProjectFormState;
     setForm: React.Dispatch<React.SetStateAction<IProjectFormState>>;
@@ -9,12 +10,10 @@ interface Props {
 }
 
 export default function ProjectForm({ form, setForm, isEdit, setDeletedImages }: Props) {
-    const { project, thumbnail } = form;
-
+    const { project, thumbnails } = form;
 
     return (
         <div className="space-y-4">
-
             {/* 이미지 */}
             <ImageUploader
                 images={project.images}
@@ -30,9 +29,15 @@ export default function ProjectForm({ form, setForm, isEdit, setDeletedImages }:
                         },
                     }))
                 }
-                thumbnail={thumbnail}
-                setThumbnail={(thumb) =>
-                    setForm((prev) => ({ ...prev, thumbnail: thumb }))
+                thumbnails={thumbnails}
+                setThumbnails={(thumbs) =>
+                    setForm((prev) => ({
+                        ...prev,
+                        thumbnails:
+                            typeof thumbs === "function"
+                                ? thumbs(prev.thumbnails)
+                                : thumbs,
+                    }))
                 }
                 isEdit={isEdit}
                 viewType="slider"
@@ -43,10 +48,8 @@ export default function ProjectForm({ form, setForm, isEdit, setDeletedImages }:
             {/* 하단 정보 좌우 영역 */}
             <section className="bg-white shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-0">
-
                     {/* 좌측 */}
                     <div className="space-y-2 text-sm">
-
                         {[
                             { label: "코드", key: "projectCode" },
                             { label: "완공", key: "completion" },
@@ -81,7 +84,6 @@ export default function ProjectForm({ form, setForm, isEdit, setDeletedImages }:
 
                     {/* 우측 */}
                     <div className="text-sm">
-
                         {isEdit ? (
                             <>
                                 <textarea
@@ -102,16 +104,11 @@ export default function ProjectForm({ form, setForm, isEdit, setDeletedImages }:
                                 </p>
                             </>
                         ) : (
-                            <p className="whitespace-pre-line">
-                                {project.description}
-                            </p>
+                            <p className="whitespace-pre-line">{project.description}</p>
                         )}
-
                     </div>
-
                 </div>
             </section>
-
         </div>
     );
 }
