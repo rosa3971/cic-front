@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getPublicFurniture, getPublicFurnitureList } from "../../api/furniture.api.ts";
 import { optimizeImage } from "../../utils/imageUtils.ts";
 import SEO from "../../components/seo/SEO.tsx";
+import ThumbnailSlide from "../../components/common/image-manager/ThumbnailSlide.tsx";
 
 export default function FurnitureDetailPage() {
     const { furnitureCode } = useParams<{ furnitureCode: string }>();
@@ -125,11 +126,12 @@ export default function FurnitureDetailPage() {
                                     className="cursor-pointer"
                                     onClick={() => navigate(`/works/furniture/${fl.furnitureCode}`)}
                                 >
-                                    <img
-                                        src={optimizeImage(fl.thumbnailUrl, 700)}
-                                        className="w-full"
-                                        alt={fl.furnitureCode}
-                                    />
+                                    <div className="w-full aspect-[4/3]"> {/* 명시적 비율/높이 부여 */}
+                                        <ThumbnailSlide
+                                            urls={(fl.thumbnailUrls || []).map((url: string) => optimizeImage(url, 700))}
+                                            className="w-full"
+                                        />
+                                    </div>
                                     <div className="mt-4 text-left">
                                         <p className="text-sm font-medium tracking-tight text-zinc-800">{fl.furnitureCode}.</p>
                                         <p className="text-xs text-zinc-500 mt-1">{fl.title}</p>

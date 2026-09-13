@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getPublicProject, getPublicProjectList } from "../../../api/project.api.ts";
-import { optimizeImage, isVideoUrl } from "../../../utils/imageUtils.ts";
+import { optimizeImage } from "../../../utils/imageUtils.ts";
 import SEO from "../../../components/seo/SEO.tsx";
+import ThumbnailSlide from "../../../components/common/image-manager/ThumbnailSlide.tsx";
 
 export default function PublicProjectDetailPage() {
     const { projectCode } = useParams<{ projectCode: string }>();
@@ -162,22 +163,12 @@ export default function PublicProjectDetailPage() {
                                     className="cursor-pointer"
                                     onClick={() => navigate(`/Works/Interior/${pl.projectCode}`)}
                                 >
-                                    {isVideoUrl(pl.thumbnailUrl) ? (
-                                        <video
-                                            src={pl.thumbnailUrl}
-                                            className="w-full"
-                                            autoPlay
-                                            muted
-                                            loop
-                                            playsInline
+                                    <div className="w-full aspect-[4/3]"> {/* 명시적 비율/높이 부여 */}
+                                        <ThumbnailSlide
+                                            urls={(pl.thumbnailUrls || []).map((url: string) => optimizeImage(url, 700))}
+                                            className="w-full h-full object-cover rounded transition-transform duration-500 hover:scale-105"
                                         />
-                                    ) : (
-                                        <img
-                                            src={optimizeImage(pl.thumbnailUrl, 700)}
-                                            className="w-full"
-                                            alt={pl.projectCode}
-                                        />
-                                    )}
+                                    </div>
                                     <div className="mt-4 text-left">
                                         <p className="text-sm font-medium tracking-tight">{pl.projectCode}.</p>
                                         <p className="text-sm text-gray-500 mt-0.5">{pl.completion}</p>
