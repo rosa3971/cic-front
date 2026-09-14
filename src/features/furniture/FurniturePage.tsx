@@ -37,6 +37,8 @@ export default function FurniturePage() {
                             <div className="w-full aspect-square overflow-hidden bg-zinc-50">
                                 <ThumbnailSlide
                                     urls={f.thumbnailUrls || []}
+                                    optimizeWidth={700}
+                                    blurAmount={10}
                                     className="w-full h-full object-cover rounded transition-transform duration-500 hover:scale-105"
                                 />
                             </div>

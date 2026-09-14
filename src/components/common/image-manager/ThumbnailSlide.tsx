@@ -1,14 +1,23 @@
-// components/common/image-manager/ThumbnailSlide.tsx
 import { useState, useEffect } from "react";
-import { isVideoUrl } from "../../../utils/imageUtils.ts";
+import { isVideoUrl, optimizeImage } from "../../../utils/imageUtils.ts";
 
 interface Props {
     urls: string[];
-    className?: string; // 이미지에 적용할 클래스 (크기, object-fit 등)
+    className?: string;
     intervalMs?: number;
+    transitionMs?: number;
+    optimizeWidth?: number;
+    blurAmount?: number; // 흐려지는 정도 (px)
 }
 
-export default function ThumbnailSlide({ urls, className = "", intervalMs = 2000 }: Props) {
+export default function ThumbnailSlide({
+                                           urls,
+                                           className = "",
+                                           intervalMs = 3000,
+                                           transitionMs = 1800,
+                                           optimizeWidth,
+                                           blurAmount = 10,
+                                       }: Props) {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -27,14 +36,25 @@ export default function ThumbnailSlide({ urls, className = "", intervalMs = 2000
 
     return (
         <div className="relative w-full h-full overflow-hidden">
-            {urls.map((url, i) =>
-                isVideoUrl(url) ? (
+            {urls.map((url, i) => {
+                const isVideo = isVideoUrl(url);
+                const src = !isVideo && optimizeWidth ? optimizeImage(url, optimizeWidth) : url;
+                const active = i === index;
+
+                const style: React.CSSProperties = {
+                    transitionProperty: "opacity, filter",
+                    transitionDuration: `${transitionMs}ms`,
+                    transitionTimingFunction: "ease-in-out",
+                    opacity: active ? 1 : 0,
+                    filter: active ? "blur(0px)" : `blur(${blurAmount}px)`,
+                };
+
+                return isVideo ? (
                     <video
                         key={url + i}
-                        src={url}
-                        className={`absolute inset-0 transition-opacity duration-[1000ms] ${
-                            i === index ? "opacity-100" : "opacity-0"
-                        } ${className}`}
+                        src={src}
+                        className={`absolute inset-0 ${className}`}
+                        style={style}
                         autoPlay
                         muted
                         loop
@@ -43,14 +63,13 @@ export default function ThumbnailSlide({ urls, className = "", intervalMs = 2000
                 ) : (
                     <img
                         key={url + i}
-                        src={url}
+                        src={src}
                         alt=""
-                        className={`absolute inset-0 transition-opacity duration-[1000ms] ${
-                            i === index ? "opacity-100" : "opacity-0"
-                        } ${className}`}
+                        className={`absolute inset-0 ${className}`}
+                        style={style}
                     />
-                )
-            )}
+                );
+            })}
         </div>
     );
 }
