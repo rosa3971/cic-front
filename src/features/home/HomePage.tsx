@@ -1,7 +1,7 @@
 // src/features/home/pages/HomePage.tsx
-import { useEffect, useState } from "react";
-import {getHomeImage} from "../../api/home.api.ts";
-import {optimizeHomeImage} from "../../utils/imageUtils.ts";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { getHomeImage } from "../../api/home.api.ts";
+import { optimizeHomeImage } from "../../utils/imageUtils.ts";
 import SEO from "../../components/seo/SEO.tsx";
 
 const HOME_JSON_LD = {
@@ -27,7 +27,6 @@ const HOME_JSON_LD = {
     ]
 };
 
-
 type Slide = {
     id: number;
     imageUrl: string;
@@ -35,25 +34,24 @@ type Slide = {
     isActive: boolean;
 };
 
-
+const PAGE_SIZE = 9; // 한 번에 몇 장씩 더 보여줄지 (3열 * 3행)
 
 export default function HomePage() {
-
-    const [slides, setSlides] = useState<Slide[]>([]);
-    const [index, setIndex] = useState(0);
+    const [images, setImages] = useState<Slide[]>([]);
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [isLoading, setIsLoading] = useState(true);
 
+    const sentinelRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        const fetchSlides = async () => {
+        const fetchImages = async () => {
             try {
                 const res = await getHomeImage();
-                // 활성화된 이미지만 필터링하고 순서대로 정렬
-                const activeSlides = (Array.isArray(res.data) ? res.data : [])
+                const activeImages = (Array.isArray(res.data) ? res.data : [])
                     .filter((s: Slide) => s.isActive)
                     .sort((a, b) => a.orderIndex - b.orderIndex);
 
-                setSlides(activeSlides);
+                setImages(activeImages);
             } catch (error) {
                 console.error("Failed to fetch home images:", error);
             } finally {
@@ -61,49 +59,65 @@ export default function HomePage() {
             }
         };
 
-        fetchSlides();
+        fetchImages();
     }, []);
 
+    // 스크롤이 하단 근처에 닿으면 더 보여주는 개수를 늘려준다 (무한 스크롤 느낌)
+    const loadMore = useCallback(() => {
+        setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, images.length));
+    }, [images.length]);
+
     useEffect(() => {
-        if (slides.length <= 1) return; // 이미지가 1개 이하면 넘길 필요 없음
+        if (!sentinelRef.current) return;
 
-        const id = setInterval(() => {
-            setIndex((prev) => (prev + 1) % slides.length);
-        }, 5000); //5초마다 슬라이드
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    loadMore();
+                }
+            },
+            { rootMargin: "300px" } // 바닥에 닿기 전에 미리 로드
+        );
 
-        return () => clearInterval(id);
-    }, [slides.length]);
+        observer.observe(sentinelRef.current);
+        return () => observer.disconnect();
+    }, [loadMore]);
 
-    // 데이터 로딩 중이거나 이미지가 없을 때의 처리
-    if (isLoading) return <div className="min-h-screen"/>;
+    if (isLoading) return <div className="min-h-screen" />;
+
+    const visibleImages = images.slice(0, visibleCount);
 
     return (
-        <div className="relative min-h-screen">
+        <div className="min-h-screen bg-white">
             <SEO url="/" jsonLd={HOME_JSON_LD} />
-            <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-                {slides.length > 0 ? (
-                    slides.map((slide, i) => {
-                        const isFirst = i === 0; // 첫 번째 이미지인지 확인
-                        return (
-                            <img
+
+            {/* 헤더 높이만큼 상단 패딩 */}
+            <div className="pt-[30px] lg:pt-[30px] px-4 lg:px-20 pb-20">
+                {images.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                        {visibleImages.map((slide, i) => (
+                            <div
                                 key={slide.id}
-                                src={optimizeHomeImage(slide.imageUrl)}
-                                alt=""
-                                // 첫 번째 이미지는 즉시 로드(eager), 나머지는 천천히(lazy)
-                                loading={isFirst ? "eager" : "lazy"}
-                                // 브라우저에게 첫 번째 이미지의 우선순위가 높음을 알림
-                                fetchPriority={isFirst ? "high" : "low"}
-                                className={
-                                    "absolute inset-0 w-full h-full object-cover transition-opacity duration-[2000ms] " +
-                                    (i === index ? "opacity-100" : "opacity-0")
-                                }
-                            />
-                        );
-                    })
+                                className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100"
+                            >
+                                <img
+                                    src={optimizeHomeImage(slide.imageUrl)}
+                                    alt=""
+                                    loading={i < 3 ? "eager" : "lazy"}
+                                    fetchPriority={i < 3 ? "high" : "low"}
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                            </div>
+                        ))}
+                    </div>
                 ) : (
-                    <div className="absolute inset-0 bg-gray-800"/>
+                    <div className="w-full h-[60vh] bg-gray-100" />
                 )}
-                <div className="absolute inset-0 bg-black/25"/>
+
+                {/* 스크롤 감지용 sentinel */}
+                {visibleCount < images.length && (
+                    <div ref={sentinelRef} className="h-10 w-full" />
+                )}
             </div>
         </div>
     );

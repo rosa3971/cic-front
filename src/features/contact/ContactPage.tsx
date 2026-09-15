@@ -42,11 +42,11 @@ export default function ContactPage() {
                 url="/contact"
             />
             {/* 제목 */}
-            <section className="hidden md:block text-center space-y-4" aria-hidden="true">
-                <p className="text-3xl font-light tracking-wide">
-                    CONTACT
-                </p>
-            </section>
+            {/*<section className="hidden md:block text-center space-y-4" aria-hidden="true">*/}
+            {/*    <p className="text-3xl font-light tracking-wide">*/}
+            {/*        CONTACT*/}
+            {/*    </p>*/}
+            {/*</section>*/}
 
             {/* 핵심: 2:1 레이아웃 */}
             <div className="grid grid-cols-1 md:grid-cols-3 md:gap-20 md:items-stretch pt-10">
@@ -63,9 +63,9 @@ export default function ContactPage() {
                 {/* 우측 (1) - SNS 영역 */}
                 <div className="order-1 md:order-2 md:min-h-0 flex flex-col ">
                     {/* CONTACT 제목 - 페이지의 유일한 H1 */}
-                    <h1 className="text-2xl font-light tracking-wide text-center md:text-3xl md:text-left pb-16 md:pb-4 md:hidden">
-                        CONTACT
-                    </h1>
+                    {/*<h1 className="text-2xl font-light tracking-wide text-center md:text-3xl md:text-left pb-16 md:pb-4 md:hidden">*/}
+                    {/*    CONTACT*/}
+                    {/*</h1>*/}
 
                     <div className="space-y-2">
                         <p className="text-sm gap-2">

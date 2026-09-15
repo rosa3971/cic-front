@@ -1,14 +1,22 @@
 // components/common/image-manager/ThumbnailSlide.tsx
 import { useState, useEffect } from "react";
-import { isVideoUrl } from "../../../utils/imageUtils.ts";
+import {isVideoUrl, optimizeImage} from "../../../utils/imageUtils.ts";
 
 interface Props {
     urls: string[];
     className?: string; // 이미지에 적용할 클래스 (크기, object-fit 등)
     intervalMs?: number;
+    transitionMs?: number;
+    optimizeWidth?: number;
 }
 
-export default function ThumbnailSlide({ urls, className = "", intervalMs = 2000 }: Props) {
+export default function ThumbnailSlide({
+                                           urls,
+                                           className = "",
+                                           intervalMs = 2000,
+                                           transitionMs = 2500,
+                                           optimizeWidth,
+}: Props) {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -27,30 +35,37 @@ export default function ThumbnailSlide({ urls, className = "", intervalMs = 2000
 
     return (
         <div className="relative w-full h-full overflow-hidden">
-            {urls.map((url, i) =>
-                isVideoUrl(url) ? (
-                    <video
-                        key={url + i}
-                        src={url}
-                        className={`absolute inset-0 transition-opacity duration-[1000ms] ${
-                            i === index ? "opacity-100" : "opacity-0"
-                        } ${className}`}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                    />
-                ) : (
-                    <img
-                        key={url + i}
-                        src={url}
-                        alt=""
-                        className={`absolute inset-0 transition-opacity duration-[1000ms] ${
-                            i === index ? "opacity-100" : "opacity-0"
-                        } ${className}`}
-                    />
-                )
-            )}
-        </div>
+            {urls.map((url, i) => {
+                const isVideo = isVideoUrl(url);
+                // 동영상은 최적화 함수를 적용하지 않고, 이미지에만 적용
+                const src = !isVideo && optimizeWidth ? optimizeImage(url, optimizeWidth) : url;
+                return isVideo ? (
+                <video
+                key={url + i}
+                src={src}
+                className={`absolute inset-0 transition-opacity ease-in-out ${className}`}
+                style={{
+                    transitionDuration: `${transitionMs}ms`,
+                    opacity: i === index ? 1 : 0,
+                }}
+                autoPlay
+                muted
+                loop
+                playsInline
+            />
+        ) : (
+            <img
+                key={url + i}
+                src={src}
+                alt=""
+                className={`absolute inset-0 transition-opacity ease-in-out ${className}`}
+                style={{
+                    transitionDuration: `${transitionMs}ms`,
+                    opacity: i === index ? 1 : 0,
+                }}
+            />
+        );
+    })}
+    </div>
     );
 }

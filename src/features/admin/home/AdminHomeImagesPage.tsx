@@ -181,7 +181,7 @@ export default function AdminHomeImagesPage() {
                             {/* 2. 새 업로드 대기 이미지 */}
                             {uploads.map((item) => (
                                 <div key={item.id} className="relative  overflow-hidden ">
-                                    <img src={item.preview} className="w-full h-40 object-cover opacity-70" />
+                                    <img src={item.preview} className="w-full aspect-[3/4] object-cover opacity-70" />
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                                         <span className="text-white font-bold text-xs px-2 py-1 ">NEW</span>
                                     </div>
@@ -192,7 +192,7 @@ export default function AdminHomeImagesPage() {
 
                             {/* 3. 빈 추가 박스 */}
                             {isEditing && (
-                                <div onClick={() => fileInputRef.current?.click()} className="h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:text-blue-500 transition-all text-gray-400">
+                                <div onClick={() => fileInputRef.current?.click()} className="aspect-[3/4] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:text-blue-500 transition-all text-gray-400">
                                     <span className="text-xs mt-2 font-medium">사진 추가</span>
                                 </div>
                             )}
@@ -242,7 +242,7 @@ function SortableCard({ id, imageUrl, index, isEditing, onDelete }: any) {
         >
             <div
                 {...(isEditing ? { ...attributes, ...listeners } : {})}
-                className={`w-full h-40 ${isEditing ? "cursor-grab active:cursor-grabbing" : ""}`}
+                className={`w-full aspect-[3/4] ${isEditing ? "cursor-grab active:cursor-grabbing" : ""}`}
             >
                 <img src={imageUrl} className="w-full h-full object-cover pointer-events-none" />
                 {isEditing && (
