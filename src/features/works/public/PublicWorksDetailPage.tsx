@@ -88,9 +88,9 @@ export default function PublicWorksDetailPage() {
                 <h1 className="mb-2 text-3xl text-center font-bold">{item.completion}</h1>
 
                 {/* ================= 이미지 영역 ================= */}
-                <div className="w-full pt-10">
+                <div className="w-full pt-20">
                     {/* 모바일 & 데스크탑 공통: 세로 나열 (스크롤 형식) */}
-                    <div className="space-y-4 md:space-y-6">
+                    <div className="space-y-4 md:space-y-6 w-[90%] mx-auto">
                         {images.map((img: string, index: number) => (
                             <img
                                 key={index}
