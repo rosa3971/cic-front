@@ -168,8 +168,8 @@ export default function AdminHomeImagesPage() {
     const slideIds = slides.map((s) => s.id);
 
     return (
-        <div className="space-y-10">
-            <div className="flex justify-between items-center border-b pb-5">
+        <div className=" space-y-10">
+            <div className="px-10 flex justify-between items-center border-b pb-5">
                 <div>
                     <h1 className="text-2xl font-bold">홈 이미지 관리</h1>
                     <p className="text-sm text-gray-500">
@@ -203,7 +203,7 @@ export default function AdminHomeImagesPage() {
                 </div>
             </div>
 
-            <div className="max-w-[1280px] m-0">
+            <div className="w-[80%] mx-auto">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndSlides}>
                     <SortableContext items={slideIds} strategy={rectSortingStrategy} disabled={!isEditing}>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
