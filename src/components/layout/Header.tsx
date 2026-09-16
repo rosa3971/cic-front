@@ -28,17 +28,10 @@ type AuthState = {
 
 function buildMenus(auth: AuthState | null): Menu[] {
     const base: Menu[] = [
-        {
-            key: "Works",
-            label: "Works",
-            sub: [
-                { label: "Interior", path: "/works/interior" },
-                { label: "Furniture", path: "/works/furniture" },
-            ],
-        },
-        { key: "Contact", label: "Contact", path: "/contact" },
+        {key: "Works", label: "Works", path:"/works" },
         { key: "About", label: "About", path: "/about" },
-        { key: "News", label: "News", path: "/news" },
+        { key: "Contact", label: "Contact", path: "/contact" },
+        // { key: "News", label: "News", path: "/news" },
     ];
 
     // 로그인 했으면 관리자 메뉴 추가
@@ -89,22 +82,25 @@ export default function Header({ isHome, onClose }: HeaderProps) {
     };
 
     return (
-        <div className="flex items-start justify-between w-full select-none">
+        <div className="flex items-center justify-between w-full">
             {/* 왼쪽: 로고 */}
             <div className="flex justify-start">
                 <img
                     src="/images/footer/footer.png"
-                    className="w-[60px] h-auto lg:w-[80px] object-contain transition-all cursor-pointer"
+                    className="w-[80px] h-auto lg:w-[100px] object-contain transition-all cursor-pointer"
                     onClick={() => handleNavigate("/")}
                     alt="Footer Logo"
                 />
             </div>
 
             {/* 오른쪽: 메뉴 + 서브메뉴 */}
-            <nav className="flex items-start gap-8 lg:gap-12">
+            <nav
+                className="flex items-center gap-8 lg:gap-12"
+                onMouseLeave={() => setHovered(null)}
+            >
                 {menus.map((menu) => {
                     const isActive = currentMenuKey === menu.key;
-                    const baseColor = isHome ? "text-black/60" : "text-zinc-400";
+                    const baseColor = "text-black";
                     const activeColor = "text-black";
 
                     return (
@@ -112,27 +108,25 @@ export default function Header({ isHome, onClose }: HeaderProps) {
                             key={menu.key}
                             className="relative flex flex-col items-center"
                             onMouseEnter={() => setHovered(menu.key)}
-                            onMouseLeave={() => setHovered(null)}
                         >
                             <button
                                 onClick={async () => {
                                     if (menu.key === "Logout") {
                                         await logout();
-                                        setUser({ role: null });
+                                        setUser({role: null});
                                         handleNavigate("/");
                                         return;
                                     }
                                     if (menu.path) handleNavigate(menu.path);
                                 }}
                                 className={
-                                    "font-cic font-bold tracking-tight text-lg lg:text-2xl transition-colors duration-300 " +
+                                    "font-cic font-bold tracking-tight text-2xl lg:text-3xl transition-colors duration-300 " +
                                     (isActive ? activeColor : `${baseColor} hover:text-black`)
                                 }
                             >
                                 {menu.label}
                             </button>
 
-                            {/* 서브 메뉴: 간격 없이 바로 이어지도록 padding으로 hover 영역 연결 */}
                             {menu.sub && hovered === menu.key && (
                                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3">
                                     <ul className="flex flex-col items-center gap-2 whitespace-nowrap">

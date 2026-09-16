@@ -35,7 +35,7 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="px-4 space-y-6 md:space-y-10 h-full">
+        <div className="px-4 space-y-6 md:space-y-10 min-h-[calc(100vh-340px)] flex flex-col justify-center">
             <SEO
                 title="Contact"
                 description="CIC Studio에 문의하세요. 서울 강동구 풍성로42길 22에 위치한 씨아이씨스튜디오입니다. 전화: 02-476-9116, 이메일: cicstudio@cicworks.com"

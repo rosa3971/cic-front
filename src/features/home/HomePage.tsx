@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { getHomeImage } from "../../api/home.api.ts";
 import { optimizeHomeImage } from "../../utils/imageUtils.ts";
 import SEO from "../../components/seo/SEO.tsx";
+import { useNavigate } from "react-router-dom";
 
 const HOME_JSON_LD = {
     "@context": "https://schema.org",
@@ -32,11 +33,14 @@ type Slide = {
     imageUrl: string;
     orderIndex: number;
     isActive: boolean;
+    linkType:string;
+    worksCode: string;
 };
 
-const PAGE_SIZE = 9; // 한 번에 몇 장씩 더 보여줄지 (3열 * 3행)
+const PAGE_SIZE = 9;
 
 export default function HomePage() {
+    const navigate = useNavigate(); // 훅 호출은 최상단, 그리고 () 붙여서 실제로 호출
     const [images, setImages] = useState<Slide[]>([]);
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [isLoading, setIsLoading] = useState(true);
@@ -62,7 +66,6 @@ export default function HomePage() {
         fetchImages();
     }, []);
 
-    // 스크롤이 하단 근처에 닿으면 더 보여주는 개수를 늘려준다 (무한 스크롤 느낌)
     const loadMore = useCallback(() => {
         setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, images.length));
     }, [images.length]);
@@ -76,7 +79,7 @@ export default function HomePage() {
                     loadMore();
                 }
             },
-            { rootMargin: "300px" } // 바닥에 닿기 전에 미리 로드
+            { rootMargin: "300px" }
         );
 
         observer.observe(sentinelRef.current);
@@ -88,17 +91,21 @@ export default function HomePage() {
     const visibleImages = images.slice(0, visibleCount);
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen w-full max-w-[1280px] mx-auto bg-white">
             <SEO url="/" jsonLd={HOME_JSON_LD} />
 
-            {/* 헤더 높이만큼 상단 패딩 */}
-            <div className="pt-[30px] lg:pt-[30px] px-4 lg:px-20 pb-20">
+            <div className="pt-[30px] lg:pt-[30px] px-4 pb-20">
                 {images.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                         {visibleImages.map((slide, i) => (
                             <div
                                 key={slide.id}
-                                className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100"
+                                className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                    if (slide.worksCode && slide.linkType) {
+                                        navigate(`/works/${slide.linkType}/${slide.worksCode}`);
+                                    }
+                                }}
                             >
                                 <img
                                     src={optimizeHomeImage(slide.imageUrl)}
@@ -111,10 +118,9 @@ export default function HomePage() {
                         ))}
                     </div>
                 ) : (
-                    <div className="w-full h-[60vh] bg-gray-100" />
+                    <div className="w-full h-[60vh]" />
                 )}
 
-                {/* 스크롤 감지용 sentinel */}
                 {visibleCount < images.length && (
                     <div ref={sentinelRef} className="h-10 w-full" />
                 )}

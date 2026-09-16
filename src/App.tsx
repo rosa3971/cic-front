@@ -24,6 +24,7 @@ import AdminFurnitureDetailPage from "./features/admin/furniture/AdminFurnitureD
 import AdminFurnitureCreatePage from "./features/admin/furniture/AdminFurnitureCreatePage.tsx";
 import ScrollToTop from "./components/layout/ScrollToTop.tsx";
 import AdminAboutPage from "./features/admin/about/AdminAboutPage.tsx";
+import PublicWorksDetailPage from "./features/works/public/PublicWorksDetailPage.tsx";
 
 console.log("SUPABASE_URL:", import.meta.env.VITE_SUPABASE_URL);
 
@@ -56,20 +57,21 @@ function App() {
 
             {/* Layout (스크롤 없음) */}
             <Route element={<Layout isScrollable={false} />}>
-                <Route path="/" element={<HomePage />} />
+
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 {/* Login */}
-                <Route path="/login" element={<LoginPage />} />
-                {/* Works - Interior (디테일) */}
-                <Route path="/works/furniture/:furnitureCode" element={<FurnitureDetailPage />} />
-                {/* Works - FurniturePage (디테일) */}
-                <Route path="/works/interior/:projectCode" element={<PublicProjectDetailPage />} />
-
+                <Route path="/login" element={<LoginPage />} /> {/* Works - Interior (디테일) */}
+                {/*<Route path="/works/furniture/:furnitureCode" element={<FurnitureDetailPage />} />*/}
+                {/*/!* Works - FurniturePage (디테일) *!/*/}
+                {/*<Route path="/works/interior/:projectCode" element={<PublicProjectDetailPage />} />*/}
             </Route>
 
             {/* Admin */}    {/* Layout (스크롤 있음) */}
             <Route element={<Layout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/works" element={<HomePage />} />
+                <Route path="/works/:linkType/:worksCode" element={<PublicWorksDetailPage />} />
                 <Route path="/admin" element={<AdminRoute />}>
                     <Route path="homeImage" element={<AdminHomeImagesPage />} />
                     <Route path="project/list" element={<AdminProjectListPage />} />
