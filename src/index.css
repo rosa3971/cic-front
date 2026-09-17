@@ -40,6 +40,8 @@ body {
     font-weight: 700;
 }
 
+
+
 .no-scrollbar {
     -ms-overflow-style: none;  /* IE, Edge */
     scrollbar-width: none;     /* Firefox */

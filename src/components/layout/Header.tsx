@@ -52,7 +52,7 @@ function buildMenus(auth: AuthState | null): Menu[] {
     return base;
 }
 
-export default function Header({ isHome, onClose }: HeaderProps) {
+export default function Header({ onClose }: HeaderProps) {
     const auth = useAtomValue(userAtom);
     const setUser = useSetAtom(userAtom);
     const menus = useMemo(() => buildMenus(auth), [auth]);
@@ -96,7 +96,7 @@ export default function Header({ isHome, onClose }: HeaderProps) {
             {/* 가운데: CIC Studio 텍스트 로고 - 내용 크기만큼만 차지 */}
             <div className="flex justify-center">
                 <p
-                    className="font-cic tracking-tight text-xl lg:text-4xl text-black cursor-pointer leading-none font-semibold whitespace-nowrap"
+                    className="font-cic tracking-tight text-xl lg:text-4xl text-black cursor-pointer leading-none font-bold whitespace-nowrap"
                     onClick={() => handleNavigate("/")}
                 >
                     CIC Studio
@@ -106,7 +106,7 @@ export default function Header({ isHome, onClose }: HeaderProps) {
 
             {/* 오른쪽: 메뉴 - 넘치면 가로 스크롤 */}
             <nav
-                className="flex items-center justify-end gap-4 lg:gap-8 overflow-x-auto"
+                className="flex items-center justify-end gap-4 lg:gap-8"
                 onMouseLeave={() => setHovered(null)}
             >
                 {menus.map((menu) => {

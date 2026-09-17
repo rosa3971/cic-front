@@ -99,7 +99,7 @@ export default function HomePage() {
                         {images.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                                 {visibleImages.map((slide, i) => (
-                                    <div key={slide.id}  className="shadow-[4px_4px_10px_rgba(0,0,0,0.25)]">
+                                    <div key={slide.id} className="shadow-[4px_4px_10px_rgba(0,0,0,0.10)]">
                                         <div
                                             className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer"
                                             onClick={() => {
