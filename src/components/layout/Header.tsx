@@ -79,9 +79,9 @@ export default function Header({ isHome, onClose }: HeaderProps) {
     };
 
     return (
-        <div className="grid grid-cols-3 items-center w-full select-none">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full gap-4">
             {/* 왼쪽: 인스타그램 아이콘 */}
-            <div className="flex justify-start">
+            <div className="flex justify-start pl-6 lg:pl-14">
                 <a href="https://www.instagram.com/cic_studio_/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -92,69 +92,71 @@ export default function Header({ isHome, onClose }: HeaderProps) {
             </a>
         </div>
 
-    {/* 가운데: CIC Studio 텍스트 로고 */}
-    <div className="flex justify-center">
-        <p
-            className="font-cic tracking-tight text-xl lg:text-3xl text-black cursor-pointer leading-none font-semibold"
-            onClick={() => handleNavigate("/")}
-        >
-            CIC Studio
-        </p>
-    </div>
 
-    {/* 오른쪽: 메뉴 - 항상 검정색 고정 */}
-    <nav
-        className="flex items-center justify-end gap-8 lg:gap-12"
-        onMouseLeave={() => setHovered(null)}
-    >
-        {menus.map((menu) => {
-            return (
-                <div
-                    key={menu.key}
-                    className="relative flex flex-col items-center"
-                    onMouseEnter={() => setHovered(menu.key)}
+            {/* 가운데: CIC Studio 텍스트 로고 - 내용 크기만큼만 차지 */}
+            <div className="flex justify-center">
+                <p
+                    className="font-cic tracking-tight text-xl lg:text-4xl text-black cursor-pointer leading-none font-semibold whitespace-nowrap"
+                    onClick={() => handleNavigate("/")}
                 >
-                    <button
-                        onClick={async () => {
-                            if (menu.key === "Logout") {
-                                await logout();
-                                setUser({ role: null });
-                                handleNavigate("/");
-                                return;
-                            }
-                            if (menu.path) handleNavigate(menu.path);
-                        }}
-                        className="font-cic font-bold tracking-tight text-lg lg:text-3xl text-black hover:opacity-70 transition-opacity duration-300"
-                    >
-                        {menu.label}
-                    </button>
+                    CIC Studio
+                </p>
+            </div>
 
-                    {menu.sub && hovered === menu.key && (
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3">
-                            <ul className="flex flex-col items-center gap-2 whitespace-nowrap">
-                                {menu.sub.map((item) => (
-                                    <li
-                                        key={item.path}
-                                        className="font-cic font-regular cursor-pointer text-black/70 hover:text-black transition-colors text-sm"
-                                        onClick={() => handleNavigate(item.path)}
-                                    >
-                                        {item.label}
-                                    </li>
-                                ))}
-                            </ul>
+
+            {/* 오른쪽: 메뉴 - 넘치면 가로 스크롤 */}
+            <nav
+                className="flex items-center justify-end gap-4 lg:gap-8 overflow-x-auto"
+                onMouseLeave={() => setHovered(null)}
+            >
+                {menus.map((menu) => {
+                    return (
+                        <div
+                            key={menu.key}
+                            className="relative flex flex-col items-center flex-shrink-0"
+                            onMouseEnter={() => setHovered(menu.key)}
+                        >
+                            <button
+                                onClick={async () => {
+                                    if (menu.key === "Logout") {
+                                        await logout();
+                                        setUser({ role: null });
+                                        handleNavigate("/");
+                                        return;
+                                    }
+                                    if (menu.path) handleNavigate(menu.path);
+                                }}
+                                className="font-cic font-semibold tracking-tight text-base lg:text-4xl text-black hover:opacity-70 transition-opacity duration-300 whitespace-nowrap"
+                            >
+                                {menu.label}
+                            </button>
+
+                            {menu.sub && hovered === menu.key && (
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3">
+                                    <ul className="flex flex-col items-center gap-2 whitespace-nowrap">
+                                        {menu.sub.map((item) => (
+                                            <li
+                                                key={item.path}
+                                                className="font-cic font-regular cursor-pointer text-black/70 hover:text-black transition-colors text-sm"
+                                                onClick={() => handleNavigate(item.path)}
+                                            >
+                                                {item.label}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>
-            );
-        })}
-    </nav>
-</div>
-);
+                    );
+                })}
+            </nav>
+        </div>
+    );
 }
 
 function InstagramIcon() {
     return (
-        <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
