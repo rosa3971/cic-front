@@ -91,40 +91,43 @@ export default function HomePage() {
     const visibleImages = images.slice(0, visibleCount);
 
     return (
-        <div className="min-h-screen w-full max-w-[1280px] mx-auto bg-white">
-            <SEO url="/" jsonLd={HOME_JSON_LD} />
+            <div className="min-h-screen bg-white">
+                <SEO url="/" jsonLd={HOME_JSON_LD} />
 
-            <div className="pt-[30px] lg:pt-[30px] px-4 pb-20">
-                {images.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                        {visibleImages.map((slide, i) => (
-                            <div
-                                key={slide.id}
-                                className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer"
-                                onClick={() => {
-                                    if (slide.worksCode && slide.linkType) {
-                                        navigate(`/works/${slide.linkType}/${slide.worksCode}`);
-                                    }
-                                }}
-                            >
-                                <img
-                                    src={optimizeHomeImage(slide.imageUrl)}
-                                    alt=""
-                                    loading={i < 3 ? "eager" : "lazy"}
-                                    fetchPriority={i < 3 ? "high" : "low"}
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                />
+                <div className="relative w-full">
+                    <div className="relative w-full max-w-[1000px] mx-auto pt-[30px] px-4 pb-20">
+                        {images.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                                {visibleImages.map((slide, i) => (
+                                    <div key={slide.id}  className="shadow-[4px_4px_10px_rgba(0,0,0,0.25)]">
+                                        <div
+                                            className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer"
+                                            onClick={() => {
+                                                if (slide.worksCode && slide.linkType) {
+                                                    navigate(`/works/${slide.linkType}/${slide.worksCode}`);
+                                                }
+                                            }}
+                                        >
+                                            <img
+                                                src={optimizeHomeImage(slide.imageUrl)}
+                                                alt=""
+                                                loading={i < 3 ? "eager" : "lazy"}
+                                                fetchPriority={i < 3 ? "high" : "low"}
+                                                className="absolute inset-0 w-full h-full object-cover"
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="w-full h-[60vh]" />
-                )}
+                        ) : (
+                            <div className="w-full h-[60vh]" />
+                        )}
 
-                {visibleCount < images.length && (
-                    <div ref={sentinelRef} className="h-10 w-full" />
-                )}
+                        {visibleCount < images.length && (
+                            <div ref={sentinelRef} className="h-10 w-full" />
+                        )}
+                    </div>
+                </div>
             </div>
-        </div>
     );
 }

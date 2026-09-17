@@ -65,7 +65,7 @@ export default function PublicWorksDetailPage() {
     const code = item.projectCode ?? item.furnitureCode;
 
     return (
-        <div className="w-full min-h-screen bg-white flex justify-center overflow-x-hidden">
+        <div className="w-full min-h-screen bg-white flex justify-center overflow-x-hidden pt-10">
             <SEO
                 title={`${code}`}
                 description={
