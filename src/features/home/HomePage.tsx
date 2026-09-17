@@ -95,7 +95,7 @@ export default function HomePage() {
                 <SEO url="/" jsonLd={HOME_JSON_LD} />
 
                 <div className="relative w-full">
-                    <div className="relative w-full max-w-[1120px] mx-auto pt-[30px] px-4 pb-20">
+                    <div className="relative w-full max-w-[1500px] mx-auto pt-[30px] px-4 pb-20">
                         {images.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                                 {visibleImages.map((slide, i) => (
