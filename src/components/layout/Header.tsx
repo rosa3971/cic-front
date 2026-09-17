@@ -81,7 +81,7 @@ export default function Header({ onClose }: HeaderProps) {
     return (
         <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full gap-4">
             {/* 왼쪽: 인스타그램 아이콘 */}
-            <div className="flex justify-start pl-6 lg:pl-14">
+            <div className="flex justify-start">
                 <a href="https://www.instagram.com/cic_studio_/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -96,7 +96,7 @@ export default function Header({ onClose }: HeaderProps) {
             {/* 가운데: CIC Studio 텍스트 로고 - 내용 크기만큼만 차지 */}
             <div className="flex justify-center">
                 <p
-                    className="font-cic tracking-tight text-xl lg:text-4xl text-black cursor-pointer leading-none font-bold whitespace-nowrap"
+                    className="font-cic tracking-tight text-xl lg:text-4xl text-black cursor-pointer leading-none font-regular whitespace-nowrap"
                     onClick={() => handleNavigate("/")}
                 >
                     CIC Studio
@@ -126,7 +126,7 @@ export default function Header({ onClose }: HeaderProps) {
                                     }
                                     if (menu.path) handleNavigate(menu.path);
                                 }}
-                                className="font-cic font-semibold tracking-tight text-base lg:text-4xl text-black hover:opacity-70 transition-opacity duration-300 whitespace-nowrap"
+                                className="font-cic font-regular tracking-tight text-base lg:text-4xl text-black hover:opacity-70 transition-opacity duration-300 whitespace-nowrap"
                             >
                                 {menu.label}
                             </button>

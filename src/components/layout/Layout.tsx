@@ -17,7 +17,7 @@ export default function Layout() {
             {/* 데스크탑 레이아웃 */}
             <div className="hidden md:block w-full">
                 {/* 상단 헤더: 위쪽 여백 추가, 높이는 auto로 내용에 맞게 */}
-                <header className="relative z-[3] w-full px-[3%] pt-10 pb-16 flex items-center">
+                <header className="relative z-[3] w-full px-[3%] pt-8 pb-16 flex items-center">
                     <Header isHome={isHome} />
                 </header>
 

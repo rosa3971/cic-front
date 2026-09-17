@@ -30,14 +30,7 @@ type AuthState = {
 
 function buildMenus(auth: AuthState | null): Menu[] {
     const base: Menu[] = [
-        {
-            key: "Works",
-            label: "Works",
-            sub: [
-                { label: "Interior", path: "/works/interior" },
-                { label: "Furniture", path: "/works/furniture" },
-            ],
-        },
+        {key: "Works", label: "Works", path: "/works"},
         { key: "Contact", label: "Contact", path: "/contact" },
         { key: "About", label: "About", path: "/about" },
         { key: "News", label: "News", path: "/news" },
