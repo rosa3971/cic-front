@@ -18,6 +18,7 @@ type Slide = {
     isActive: boolean;
     linkType: LinkType;
     worksCode: string | null;
+    completion?: string;
 };
 
 type UploadItem = {

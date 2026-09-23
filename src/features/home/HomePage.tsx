@@ -35,6 +35,8 @@ type Slide = {
     isActive: boolean;
     linkType:string;
     worksCode: string;
+    completion?: string;
+    title?:string;
 };
 
 const PAGE_SIZE = 9;
@@ -101,7 +103,7 @@ export default function HomePage() {
                                 {visibleImages.map((slide, i) => (
                                     <div key={slide.id} className="shadow-[4px_4px_10px_rgba(0,0,0,0.10)]">
                                         <div
-                                            className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer"
+                                            className="group  relative w-full aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer"
                                             onClick={() => {
                                                 if (slide.worksCode && slide.linkType) {
                                                     navigate(`/works/${slide.linkType}/${slide.worksCode}`);
@@ -115,6 +117,20 @@ export default function HomePage() {
                                                 fetchPriority={i < 3 ? "high" : "low"}
                                                 className="absolute inset-0 w-full h-full object-cover"
                                             />
+
+                                            {/* 어두워지는 오버레이 */}
+                                            <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/40" />
+
+                                            <div className="absolute left-5 bottom-6 text-white opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 pointer-events-none">
+                                                <p className="text-2xl lg:text-3xl font-bold leading-tight">
+                                                    {slide.worksCode}
+                                                </p>
+                                                {(slide.completion || slide.title) && (
+                                                    <p className="mt-2 text-sm lg:text-base font-medium">
+                                                        {slide.completion ? slide.completion : slide.title}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

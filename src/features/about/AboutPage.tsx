@@ -18,18 +18,18 @@ export default function AboutPage() {
 
     if (isLoading) {
         return (
-            <div className="h-full flex flex-col pt-8 md:pt-14 pb-8 w-full  mx-auto animate-pulse">
-                <div className="flex-1 w-full min-h-[50vh] bg-zinc-200 rounded-md" />
+            <div className="h-full flex flex-col pt-8 md:pt-14 w-full  mx-auto animate-pulse">
+                <div className="flex-1 w-full min-h-[50vh]  rounded-md" />
                 <div className="mt-6 space-y-2 flex flex-col items-end">
-                    <div className="w-48 h-4 bg-zinc-200 rounded" />
-                    <div className="w-64 h-4 bg-zinc-200 rounded" />
+                    <div className="w-48 h-4 rounded" />
+                    <div className="w-64 h-4  rounded" />
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="w-full mx-auto min-h-[calc(100vh-140px)] flex flex-col items-center justify-center pb-8">
+        <div className="w-full mx-auto min-h-[calc(100vh-140px)] flex flex-col items-center justify-center">
             <SEO
                 title="About"
                 description="CIC Studio(씨아이씨스튜디오)를 소개합니다. 공간과 사람을 연결하는 인테리어 디자인 스튜디오입니다."
@@ -37,7 +37,7 @@ export default function AboutPage() {
                 url="/about"
             />
             {/* 이미지 영역 */}
-            <section className="w-full flex items-center justify-center  overflow-hidden rounded-md min-h-[300px] max-h-[65vh]">
+            <section className="w-full flex items-center justify-center  overflow-hidden rounded-md min-h-[300px] max-h-[60vh]">
                 {data?.imageUrl ? (
                     <img
                         src={data.imageUrl}
