@@ -42,11 +42,9 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="h-full min-h-screen px-16 py-16">
-            <h1 className="text-3xl font-cic font-light mb-10 uppercase">
-                Studio Login
-            </h1>
-            <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+        <div className="h-full px-16 pt-20 flex flex-col items-center justify-center">
+            <div className="w-full max-w-md">
+                <form onSubmit={handleSubmit} className="space-y-6 w-full">
 
                 {/* 이메일 */}
                 <div className="space-y-2">
@@ -85,5 +83,6 @@ export default function LoginPage() {
                 </button>
             </form>
         </div>
+    </div>
     );
 }

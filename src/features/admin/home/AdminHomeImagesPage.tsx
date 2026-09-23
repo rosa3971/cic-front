@@ -203,7 +203,7 @@ export default function AdminHomeImagesPage() {
                 </div>
             </div>
 
-            <div className="w-[80%] mx-auto">
+            <div className="w-[60%] mx-auto">
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndSlides}>
                     <SortableContext items={slideIds} strategy={rectSortingStrategy} disabled={!isEditing}>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
